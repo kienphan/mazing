@@ -48,5 +48,3 @@ end
 group :production do
   gem 'pg'
 end
-# remove cross origin request 
-gem 'rack-cors', :require => 'rack/cors'
