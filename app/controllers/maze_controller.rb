@@ -1,7 +1,6 @@
 class MazeController < ApplicationController
   include MazeHelper
   def index
-    request.headers['Access-Control-Allow-Origin'] = '*'
     check_maze_params([params[:width], params[:height]])
     @maze_height = params[:width]
     @maze_width = params[:height]
