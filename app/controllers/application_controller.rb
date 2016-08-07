@@ -4,25 +4,14 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 
-  before_filter :cors_preflight_check
-  after_filter :cors_set_access_control_headers
+  before_filter :add_allow_credentials_headers
 
-  # For all responses in this controller, return the CORS access control headers.
-
-  def cors_set_access_control_headers
-    headers['Access-Control-Allow-Origin'] = '*'
-    headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
-    headers['Access-Control-Request-Method'] = '*'
-    headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  def add_allow_credentials_headers
+    response.headers['Access-Control-Allow-Origin'] = request.headers['Origin'] || '*'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
   end
 
-  def cors_preflight_check
-    if request.method == "OPTIONS"
-      headers['Access-Control-Allow-Origin'] = 'http://localhost'
-      headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
-      headers['Access-Control-Allow-Headers'] = %w{Origin Accept Content-Type X-Requested-With auth_token X-CSRF-Token}.join(',')
-      headers['Access-Control-Max-Age'] = '1728000'
-      render :text => '', :content_type => 'text/plain'
-    end
+  def options
+    head status: 200, 'Access-Control-Allow-Headers': 'accept,content-type'
   end
 end
